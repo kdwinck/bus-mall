@@ -18,13 +18,25 @@ section {
   flex-direction: row;
   justify-content: space-around;
   align-items: center;
-  background-color: grey;
   height: 400px;
 }
 
-div {
+input {
   height: 300px;
   width: 300px;
   background-color: white;
   margin: 20px;
+  box-shadow: 10px 10px;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.show {
+  visibility: visible;
+  height: auto;
+  width: auto;
+  margin: auto;
+  box-shadow: none;
 }

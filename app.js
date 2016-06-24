@@ -2,10 +2,12 @@
 var images = ['bag', 'banana', 'bathroom', 'boots', 'breakfast', 'bubblegum', 'chair', 'cthulhu', 'dog-duck', 'dragon', 'pen', 'pet-sweep', 'scissors', 'shark', 'sweep', 'tauntaun', 'unicorn', 'usb', 'water-can', 'wine-glass'];
 var items = [];
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // item object constructor
 function Item(name) {
   this.name = name;
-  this.source = name + '.jpg';
+  this.source = 'img/' + name + '.jpg';
   this.clicks = 0;
   this.shown = 0;
   items.push(this);
@@ -21,12 +23,12 @@ Item.prototype.updateShown = function() {
   this.shown += 1;
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 // create all the item objects
 for (var index in images) {
   new Item(images[index]);
 }
-
-console.log(items); //check to make sure objects exist
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -36,25 +38,80 @@ var tracker = {
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
   img3: document.getElementById('img3'),
+  selectedItems: [],
 
-  pickImages: function() {
-    // pick images and updated divs
+  // get three random values and push to an array
+  pickIndices: function() {
+    while (tracker.selectedItems.length < 3) {
+      var number = Math.floor(Math.random() * items.length);
+      if (tracker.selectedItems.indexOf(number) === -1) {
+        tracker.selectedItems.push(number);
+      }
+    }
   },
 
+  // convert random values to objects from index array
+  convertIndices: function() {
+    for (var index in tracker.selectedItems) {
+      tracker.selectedItems[index] = items[tracker.selectedItems[index]];
+    }
+  },
+
+  // update the images on the page
   updateImages: function() {
-    // update divs with seleted images
+    img1.src = tracker.selectedItems[0].source;
+    tracker.selectedItems[0].updateShown();
+    img2.src = tracker.selectedItems[1].source;
+    tracker.selectedItems[1].updateShown();
+    img3.src = tracker.selectedItems[2].source;
+    tracker.selectedItems[2].updateShown();
+  },
+
+  clearSelectedItems: function() {
+    tracker.selectedItems = [];
   },
 
   updateClickTotals: function() {
-    this.total_clicks += 1;
+    tracker.total_clicks += 1;
+  },
+
+  updateItem: function() {
+    var index = parseInt(this.name);
+    tracker.selectedItems[index].updateClicks();
+    tracker.updateClickTotals();
+    tracker.clearSelectedItems();
+    tracker.doTheImageThing();
+  },
+
+  doTheImageThing: function () {
+    tracker.pickIndices();
+    tracker.convertIndices();
+    tracker.updateImages();
+    if (tracker.total_clicks === 15) {
+      tracker.cancelClickListenter();
+      tracker.createResultsButton();
+    }
+  },
+
+  createResultsButton: function() {
+    document.getElementById('button').className = 'show';
   },
 
   cancelClickListenter: function() {
-    //cancel listener after total_clicks = 15
+    image1.removeEventListener('click', tracker.updateItem);
+    image2.removeEventListener('click', tracker.updateItem);
+    image3.removeEventListener('click', tracker.updateItem);
   }
 };
 
-console.log(tracker.total_clicks);
-tracker.updateClickTotals();
-console.log(tracker.total_clicks);
-// toDo add click event listener to items divs
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var image1 = tracker.img1;
+var image2 = tracker.img2;
+var image3 = tracker.img3;
+
+image1.addEventListener('click', tracker.updateItem);
+image2.addEventListener('click', tracker.updateItem);
+image3.addEventListener('click', tracker.updateItem);
+
+tracker.doTheImageThing();
