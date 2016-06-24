@@ -75,22 +75,9 @@ var tracker = {
     tracker.total_clicks += 1;
   },
 
-  updateItem1: function() {
-    tracker.selectedItems[0].updateClicks();
-    tracker.updateClickTotals();
-    tracker.clearSelectedItems();
-    tracker.doTheImageThing();
-  },
-
-  updateItem2: function() {
-    tracker.selectedItems[1].updateClicks();
-    tracker.updateClickTotals();
-    tracker.clearSelectedItems();
-    tracker.doTheImageThing();
-  },
-
-  updateItem3: function() {
-    tracker.selectedItems[2].updateClicks();
+  updateItem: function() {
+    var index = parseInt(this.name);
+    tracker.selectedItems[index].updateClicks();
     tracker.updateClickTotals();
     tracker.clearSelectedItems();
     tracker.doTheImageThing();
@@ -102,13 +89,18 @@ var tracker = {
     tracker.updateImages();
     if (tracker.total_clicks === 15) {
       tracker.cancelClickListenter();
+      tracker.createResultsButton();
     }
   },
 
+  createResultsButton: function() {
+    document.getElementById('button').className = 'show';
+  },
+
   cancelClickListenter: function() {
-    image1.removeEventListener('click', tracker.updateItem1);
-    image2.removeEventListener('click', tracker.updateItem2);
-    image3.removeEventListener('click', tracker.updateItem3);
+    image1.removeEventListener('click', tracker.updateItem);
+    image2.removeEventListener('click', tracker.updateItem);
+    image3.removeEventListener('click', tracker.updateItem);
   }
 };
 
@@ -118,9 +110,8 @@ var image1 = tracker.img1;
 var image2 = tracker.img2;
 var image3 = tracker.img3;
 
-image1.addEventListener('click', tracker.updateItem1);
-image2.addEventListener('click', tracker.updateItem2);
-image3.addEventListener('click', tracker.updateItem3);
-
+image1.addEventListener('click', tracker.updateItem);
+image2.addEventListener('click', tracker.updateItem);
+image3.addEventListener('click', tracker.updateItem);
 
 tracker.doTheImageThing();
