@@ -5,7 +5,7 @@ var items = [];
 // item object constructor
 function Item(name) {
   this.name = name;
-  this.source = name + '.jpg';
+  this.source = 'img/' + name + '.jpg';
   this.clicks = 0;
   this.shown = 0;
   items.push(this);
@@ -26,8 +26,6 @@ for (var index in images) {
   new Item(images[index]);
 }
 
-console.log(items); //check to make sure objects exist
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 // tracker object used to change images and update all properties
@@ -36,13 +34,30 @@ var tracker = {
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
   img3: document.getElementById('img3'),
+  selectedItems: [],
 
-  pickImages: function() {
-    // pick images and updated divs
+  // get three random values and push to an array
+  pickIndices: function() {
+    while (tracker.selectedItems.length < 3) {
+      var number = Math.floor(Math.random() * items.length);
+      if (tracker.selectedItems.indexOf(number) === -1) {
+        tracker.selectedItems.push(number);
+      }
+    }
   },
 
+  // convert random values to objects from index array
+  convertIndices: function() {
+    for (var index in tracker.selectedItems) {
+      tracker.selectedItems[index] = items[tracker.selectedItems[index]];
+    }
+  },
+
+  // update the images on the page
   updateImages: function() {
-    // update divs with seleted images
+    img1.src = tracker.selectedItems[0].source;
+    img2.src = tracker.selectedItems[1].source;
+    img3.src = tracker.selectedItems[2].source;
   },
 
   updateClickTotals: function() {
@@ -54,7 +69,7 @@ var tracker = {
   }
 };
 
-console.log(tracker.total_clicks);
-tracker.updateClickTotals();
-console.log(tracker.total_clicks);
+tracker.pickIndices();
+tracker.convertIndices();
+tracker.updateImages();
 // toDo add click event listener to items divs
