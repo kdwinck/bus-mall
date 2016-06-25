@@ -89,17 +89,14 @@ var tracker = {
     tracker.updateImages();
     if (tracker.total_clicks === 15) {
       tracker.cancelClickListener();
-      tracker.createResultsButton();
-      tracker.createResetButton();
+      tracker.showTotalClicks();
+      tracker.showButton('results_button');
+      tracker.showButton('reset_button');
     }
   },
 
-  createResultsButton: function() {
-    document.getElementById('results_button').className = 'show';
-  },
-
-  createResetButton: function() {
-    document.getElementById('reset_button').className = 'show';
+  showButton: function(id) {
+    document.getElementById(id).className = 'show';
   },
 
   cancelClickListener: function() {
@@ -116,6 +113,14 @@ var tracker = {
       list_data.textContent = items[item].name + ' was clicked ' + items[item].clicks + ' times';
       list.appendChild(list_data);
     }
+    // remove the event listener from the results button
+    var results_button = document.getElementById('results_button');
+    results_button.removeEventListener('click', tracker.updateList);
+  },
+
+  showTotalClicks: function() {
+    var pTag = document.getElementById('clicks');
+    pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   }
 };
 
