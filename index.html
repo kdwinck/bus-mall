@@ -4,10 +4,12 @@
   <head>
     <meta charset="utf-8">
     <link rel="stylesheet" href="style.css">
+    <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
     <title>BusMall</title>
   </head>
 
   <body>
+
     <h1>Please click the item you most want!</h1>
 
     <section>
@@ -16,7 +18,13 @@
       <input type="image" id='img3' name='2'/>
     </section>
 
-    <input type="button" name="name" value="Results" class="hidden" id="button">
+    <section id="buttons">
+      <input type="button" name="name" value="Reset" class="hidden" onClick="history.go(0)" id="reset_button">
+      <p id="clicks"></p>
+      <input type="button" name="name" value="Results" class="hidden" id="results_button">
+    </section>
+
+    <ul id="results"></ul>
 
     <script type="text/javascript" src="app.js"></script>
   </body>

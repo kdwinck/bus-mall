@@ -13,13 +13,13 @@ function Item(name) {
   items.push(this);
 }
 
+// update the clicks total of this item
 Item.prototype.updateClicks = function() {
-  // update the clicks total of this item
   this.clicks += 1;
 };
 
+// update the total of times shown when this image is selected
 Item.prototype.updateShown = function() {
-  // update the total of times shown when this image is selected
   this.shown += 1;
 };
 
@@ -88,19 +88,39 @@ var tracker = {
     tracker.convertIndices();
     tracker.updateImages();
     if (tracker.total_clicks === 15) {
-      tracker.cancelClickListenter();
-      tracker.createResultsButton();
+      tracker.cancelClickListener();
+      tracker.showTotalClicks();
+      tracker.showButton('results_button');
+      tracker.showButton('reset_button');
     }
   },
 
-  createResultsButton: function() {
-    document.getElementById('button').className = 'show';
+  showButton: function(id) {
+    document.getElementById(id).className = 'show';
   },
 
-  cancelClickListenter: function() {
+  cancelClickListener: function() {
     image1.removeEventListener('click', tracker.updateItem);
     image2.removeEventListener('click', tracker.updateItem);
     image3.removeEventListener('click', tracker.updateItem);
+  },
+
+  // update list with data
+  updateList: function() {
+    var list = document.getElementById('results');
+    for (var item in items) {
+      var list_data = document.createElement('li');
+      list_data.textContent = items[item].name + ' was clicked ' + items[item].clicks + ' times';
+      list.appendChild(list_data);
+    }
+    // remove the event listener from the results button
+    var results_button = document.getElementById('results_button');
+    results_button.removeEventListener('click', tracker.updateList);
+  },
+
+  showTotalClicks: function() {
+    var pTag = document.getElementById('clicks');
+    pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   }
 };
 
@@ -109,9 +129,11 @@ var tracker = {
 var image1 = tracker.img1;
 var image2 = tracker.img2;
 var image3 = tracker.img3;
-
 image1.addEventListener('click', tracker.updateItem);
 image2.addEventListener('click', tracker.updateItem);
 image3.addEventListener('click', tracker.updateItem);
+
+var results_button = document.getElementById('results_button');
+results_button.addEventListener('click', tracker.updateList);
 
 tracker.doTheImageThing();
