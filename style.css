@@ -34,11 +34,20 @@ input:focus {
 }
 
 ul {
-  color: white;
+  padding: 0px;
+  width: 100%;
+  column-count: 4;
+  column-rule-width: thin;
+  column-rule-color: #ffffff;
+  column-rule-style: solid;
+  list-style-type: none;
 }
 
 li {
-  color: white;
+  color: #071257;
+  font-size: 18px;
+  padding: 5px;
+  text-align: center;
 }
 
 .hidden {
@@ -49,6 +58,7 @@ li {
   visibility: visible;
   height: 50px;
   width: 100px;
+  border-radius: 25px;
   background-color: #84d1ca;
   font-size: 24px;
   margin: auto;
@@ -61,4 +71,5 @@ li {
   justify-content: space-around;
   height: 50px;
   width: 100%;
+  margin: 40px;
 }
