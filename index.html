@@ -16,7 +16,12 @@
       <input type="image" id='img3' name='2'/>
     </section>
 
-    <input type="button" name="name" value="Results" class="hidden" id="button">
+    <section id="buttons">
+      <input type="button" name="name" value="Reset" class="hidden" onClick="history.go(0)" id="reset_button">
+      <input type="button" name="name" value="Results" class="hidden" id="results_button">
+    </section>
+
+    <ul id="results"></ul>
 
     <script type="text/javascript" src="app.js"></script>
   </body>
