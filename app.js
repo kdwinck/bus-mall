@@ -13,11 +13,6 @@ function Item(name) {
   items.push(this);
 }
 
-// update the clicks total of this item
-Item.prototype.updateClicks = function() {
-  this.clicks += 1;
-};
-
 // update the total of times shown when this image is selected
 Item.prototype.updateShown = function() {
   this.shown += 1;
@@ -60,10 +55,13 @@ var tracker = {
   // update the images on the page
   updateImages: function() {
     img1.src = tracker.selectedItems[0].source;
+    img1.name = tracker.selectedItems[0].name; //added
     tracker.selectedItems[0].updateShown();
     img2.src = tracker.selectedItems[1].source;
+    img2.name = tracker.selectedItems[1].name; //added
     tracker.selectedItems[1].updateShown();
     img3.src = tracker.selectedItems[2].source;
+    img3.name = tracker.selectedItems[2].name; //added
     tracker.selectedItems[2].updateShown();
   },
 
@@ -71,16 +69,32 @@ var tracker = {
     tracker.selectedItems = [];
   },
 
+  updateClicks: function(obj) {
+    obj.clicks += 1;
+  },
+
   updateClickTotals: function() {
     tracker.total_clicks += 1;
   },
 
-  updateItem: function() {
-    var index = parseInt(this.name);
-    tracker.selectedItems[index].updateClicks();
+  clickHelper: function(obj) {
+    tracker.updateClicks(obj);
     tracker.updateClickTotals();
     tracker.clearSelectedItems();
     tracker.doTheImageThing();
+  },
+
+  updateItem: function(event) {
+    var name = event.target.name;
+    if (images.indexOf(name) !== -1) {
+      for (var obj in tracker.selectedItems) {
+        if (tracker.selectedItems[obj].name === name) {
+          tracker.clickHelper(tracker.selectedItems[obj]);
+        }
+      }
+    } else {
+      alert('Warning! You did not click an image just now. Please click within the image.');
+    }
   },
 
   doTheImageThing: function () {
@@ -100,9 +114,7 @@ var tracker = {
   },
 
   cancelClickListener: function() {
-    image1.removeEventListener('click', tracker.updateItem);
-    image2.removeEventListener('click', tracker.updateItem);
-    image3.removeEventListener('click', tracker.updateItem);
+    images_section.removeEventListener('click', tracker.updateItem);
   },
 
   // update list with data
@@ -126,12 +138,8 @@ var tracker = {
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-var image1 = tracker.img1;
-var image2 = tracker.img2;
-var image3 = tracker.img3;
-image1.addEventListener('click', tracker.updateItem);
-image2.addEventListener('click', tracker.updateItem);
-image3.addEventListener('click', tracker.updateItem);
+var images_section = document.getElementById('images');
+images_section.addEventListener('click', tracker.updateItem);
 
 var results_button = document.getElementById('results_button');
 results_button.addEventListener('click', tracker.updateList);
