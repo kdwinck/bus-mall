@@ -93,7 +93,7 @@ var tracker = {
         }
       }
     } else {
-      alert('Please click inside an image!');
+      alert('Warning! You did not click an image just now. Please click within the image.');
     }
   },
 
