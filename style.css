@@ -92,6 +92,11 @@ li {
   text-transform: uppercase;
 }
 
+#bar {
+  background-color: white;
+  visibility: hidden;
+}
+
 @media (max-width: 500px) {
   body {
     background-image: linear-gradient(#c378f7, #0c8188);

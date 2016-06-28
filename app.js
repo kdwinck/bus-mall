@@ -29,6 +29,8 @@ for (var index in images) {
 
 // tracker object used to change images and update all properties
 var tracker = {
+  labels: [],
+  data: [],
   total_clicks: 0,
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
@@ -118,21 +120,57 @@ var tracker = {
   },
 
   // update list with data
-  updateList: function() {
-    var list = document.getElementById('results');
-    for (var item in items) {
-      var list_data = document.createElement('li');
-      list_data.textContent = items[item].name + ' was clicked ' + items[item].clicks + ' times';
-      list.appendChild(list_data);
-    }
-    // remove the event listener from the results button
-    var results_button = document.getElementById('results_button');
-    results_button.removeEventListener('click', tracker.updateList);
-  },
+  // updateList: function() {
+  //   var list = document.getElementById('results');
+  //   for (var item in items) {
+  //     var list_data = document.createElement('li');
+  //     list_data.textContent = items[item].name + ' was clicked ' + items[item].clicks + ' times';
+  //     list.appendChild(list_data);
+  //   }
+  //   // remove the event listener from the results button
+  //   var results_button = document.getElementById('results_button');
+  //   results_button.removeEventListener('click', tracker.updateList);
+  // },
 
   showTotalClicks: function() {
     var pTag = document.getElementById('clicks');
     pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
+  },
+
+  updateChartData: function() {
+    for (var index in items) {
+      tracker.labels[index] = items[index].name;
+      tracker.data[index] = items[index].clicks;
+    }
+  },
+
+  renderBarChart: function() {
+    var canvas = document.getElementById('bar');
+    var ctx = canvas.getContext('2d');
+
+    tracker.updateChartData();
+
+    var data = {
+      labels: tracker.labels,
+      datasets: [
+        {
+          label: 'Total Clicks',
+          backgroundColor: 'rgba(255,99,132,0.2)',
+          borderColor: 'rgba(255,99,132,1)',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(255,99,132,0.4)',
+          hoverBorderColor: 'rgba(255,99,132,1)',
+          data: tracker.data
+        }
+      ]
+    };
+
+    var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: data
+    });
+
+    canvas.style.visibility = 'visible';
   }
 };
 
@@ -142,6 +180,6 @@ var images_section = document.getElementById('images');
 images_section.addEventListener('click', tracker.updateItem);
 
 var results_button = document.getElementById('results_button');
-results_button.addEventListener('click', tracker.updateList);
+results_button.addEventListener('click', tracker.renderBarChart);
 
 tracker.doTheImageThing();
