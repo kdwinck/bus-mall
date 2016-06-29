@@ -29,37 +29,33 @@ section {
   flex-wrap: wrap;
 }
 
-input {
-  height: 300px;
-  width: 300px;
-  background-color: white;
-  margin: 20px;
-  box-shadow: 10px 10px;
-}
-
 input:focus {
   outline: 0;
 }
 
-ul {
-  padding: 0px;
-  column-count: 4;
-  column-rule-width: thin;
-  column-rule-color: #ffffff;
-  column-rule-style: solid;
-  column-width: auto;
-  list-style-type: none;
-}
-
-li {
-  font-size: 14px;
-  padding: 5px;
-  text-align: left;
-  font-family: 'Arvo', serif;
+article {
+  height: 300px;
+  width: 100%;
+  margin: 30px;
 }
 
 .hidden {
   visibility: hidden;
+}
+
+.imgart {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 300px;
+  width: 300px;
+  background-color: white;
+  margin: 20px;
+  box-shadow: 10px 10px black;
+}
+
+.imgart:hover {
+  cursor: pointer;
 }
 
 .show {

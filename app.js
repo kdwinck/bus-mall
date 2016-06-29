@@ -30,7 +30,9 @@ for (var index in images) {
 // tracker object used to change images and update all properties
 var tracker = {
   labels: [],
-  data: [],
+  click_data: [],
+  shown_data: [],
+  perc_clicked: [],
   total_clicks: 0,
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
@@ -57,13 +59,19 @@ var tracker = {
   // update the images on the page
   updateImages: function() {
     img1.src = tracker.selectedItems[0].source;
-    img1.name = tracker.selectedItems[0].name; //added
-    tracker.selectedItems[0].updateShown();
     img2.src = tracker.selectedItems[1].source;
-    img2.name = tracker.selectedItems[1].name; //added
-    tracker.selectedItems[1].updateShown();
     img3.src = tracker.selectedItems[2].source;
-    img3.name = tracker.selectedItems[2].name; //added
+
+    img1.name = tracker.selectedItems[0].name;
+    img2.name = tracker.selectedItems[1].name;
+    img3.name = tracker.selectedItems[2].name;
+
+    art1.name = tracker.selectedItems[0].name;
+    art2.name = tracker.selectedItems[1].name;
+    art3.name = tracker.selectedItems[2].name;
+
+    tracker.selectedItems[0].updateShown();
+    tracker.selectedItems[1].updateShown();
     tracker.selectedItems[2].updateShown();
   },
 
@@ -88,7 +96,7 @@ var tracker = {
 
   updateItem: function(event) {
     var name = event.target.name;
-    if (images.indexOf(name) !== -1) {
+    if (name !== 'images') {
       for (var obj in tracker.selectedItems) {
         if (tracker.selectedItems[obj].name === name) {
           tracker.clickHelper(tracker.selectedItems[obj]);
@@ -119,18 +127,9 @@ var tracker = {
     images_section.removeEventListener('click', tracker.updateItem);
   },
 
-  // update list with data
-  // updateList: function() {
-  //   var list = document.getElementById('results');
-  //   for (var item in items) {
-  //     var list_data = document.createElement('li');
-  //     list_data.textContent = items[item].name + ' was clicked ' + items[item].clicks + ' times';
-  //     list.appendChild(list_data);
-  //   }
-  //   // remove the event listener from the results button
-  //   var results_button = document.getElementById('results_button');
-  //   results_button.removeEventListener('click', tracker.updateList);
-  // },
+  resetPage: function() {
+    location.reload();
+  },
 
   showTotalClicks: function() {
     var pTag = document.getElementById('clicks');
@@ -140,8 +139,11 @@ var tracker = {
   updateChartData: function() {
     for (var index in items) {
       tracker.labels[index] = items[index].name;
-      tracker.data[index] = items[index].clicks;
+      tracker.click_data[index] = items[index].clicks;
+      tracker.shown_data[index] = items[index].shown;
+      tracker.perc_clicked[index] = (Math.round(items[index].clicks / items[index].shown * 10) / 10) * 100;
     }
+    console.log(tracker.perc_clicked);
   },
 
   renderBarChart: function() {
@@ -154,22 +156,42 @@ var tracker = {
       labels: tracker.labels,
       datasets: [
         {
-          label: 'Total Clicks',
+          label: 'Times Chosen',
           backgroundColor: 'rgba(255,99,132,0.2)',
           borderColor: 'rgba(255,99,132,1)',
           borderWidth: 1,
-          hoverBackgroundColor: 'rgba(255,99,132,0.4)',
-          hoverBorderColor: 'rgba(255,99,132,1)',
-          data: tracker.data
+          hoverBackgroundColor: 'rgba(255,99,132,0.5)',
+          data: tracker.click_data
+        },
+        {
+          label: 'Times Shown',
+          backgroundColor: 'rgba(26, 200, 217,0.2)',
+          borderColor: 'rgb(15, 142, 235)',
+          borderWidth: 1,
+          hoverBackgroundColor: 'rgba(6, 112, 189, 0.5)',
+          data: tracker.shown_data
         }
       ]
     };
 
     var barChart = new Chart(ctx, {
       type: 'bar',
-      data: data
+      data: data,
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+        scales: {
+          yAxes: [{
+            ticks: {
+              stepSize: 1
+            }
+          }]
+        }
+      }
     });
 
+    var results_button = document.getElementById('results_button');
+    results_button.removeEventListener('click', tracker.renderBarChart);
     canvas.style.visibility = 'visible';
   }
 };
@@ -181,5 +203,8 @@ images_section.addEventListener('click', tracker.updateItem);
 
 var results_button = document.getElementById('results_button');
 results_button.addEventListener('click', tracker.renderBarChart);
+
+var reset_button = document.getElementById('reset_button');
+reset_button.addEventListener('click', tracker.resetPage);
 
 tracker.doTheImageThing();
