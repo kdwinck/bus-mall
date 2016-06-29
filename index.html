@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="style.css">
     <link href='https://fonts.googleapis.com/css?family=Arvo' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Montserrat:700' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.6/Chart.min.js"></script>
     <title>BusMall</title>
   </head>
 
@@ -14,18 +15,30 @@
     <h1>Please click the item you most want!</h1>
 
     <section id="images">
-      <input type="image" id='img1' class="img" name='0'/>
-      <input type="image" id='img2' class="img" name='1'/>
-      <input type="image" id='img3' class="img" name='2'/>
+      <article class='imgart' id='art1' name='0'>
+        <input type="image"  id='img1' class="img"/>
+      </article>
+      <article class='imgart' id='art2' name='1'>
+        <input type="image" id='img2' class="img"/>
+      </article>
+      <article class='imgart' id='art3' name='2'>
+        <input type="image" id='img3' class="img"/>
+      </article>
     </section>
 
     <section id="buttons">
-      <input type="button" name="name" value="Reset" class="hidden" onClick="history.go(0)" id="reset_button">
+      <input type="button" name="name" value="Reset" class="hidden" id="reset_button">
       <p id="clicks"></p>
       <input type="button" name="name" value="Results" class="hidden" id="results_button">
     </section>
 
-    <ul id="results"></ul>
+    <article>
+      <canvas id="bar" width="300" height="300"></canvas>
+    </article>
+
+    <article>
+      <canvas id="pie" width="300" height="300"></canvas>
+    </article>
 
     <script type="text/javascript" src="app.js"></script>
   </body>
