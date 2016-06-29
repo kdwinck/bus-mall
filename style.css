@@ -34,6 +34,8 @@ input:focus {
 }
 
 article {
+  display: flex;
+  justify-content: space-around;
   height: 300px;
   width: 100%;
   margin: 30px;
@@ -91,6 +93,15 @@ article {
 #bar {
   background-color: white;
   visibility: hidden;
+  margin: 30px;
+  width: 100%;
+}
+
+#pie {
+  background-color: white;
+  visibility: hidden;
+  width: 100%;
+  margin: 30px;
 }
 
 @media (max-width: 500px) {

@@ -32,27 +32,28 @@ var tracker = {
   labels: [],
   click_data: [],
   shown_data: [],
-  perc_clicked: [],
   total_clicks: 0,
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
   img3: document.getElementById('img3'),
   selectedItems: [],
+  sortedLabels: [],
+  sortedClicks: [],
 
   // get three random values and push to an array
   pickIndices: function() {
-    while (tracker.selectedItems.length < 3) {
+    while (this.selectedItems.length < 3) {
       var number = Math.floor(Math.random() * items.length);
-      if (tracker.selectedItems.indexOf(number) === -1) {
-        tracker.selectedItems.push(number);
+      if (this.selectedItems.indexOf(number) === -1) {
+        this.selectedItems.push(number);
       }
     }
   },
 
   // convert random values to objects from index array
   convertIndices: function() {
-    for (var index in tracker.selectedItems) {
-      tracker.selectedItems[index] = items[tracker.selectedItems[index]];
+    for (var index in this.selectedItems) {
+      this.selectedItems[index] = items[this.selectedItems[index]];
     }
   },
 
@@ -136,14 +137,32 @@ var tracker = {
     pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   },
 
+  sortByPercClicked: function() {
+    items.sort(function (a, b) {
+      if (a.clicks < b.clicks) {
+        return 1;
+      }
+      if (a.clicks > b.clicks) {
+        return -1;
+      }
+      return 0;
+    });
+
+    var sortedItems = items.slice(0,5);
+
+    for (var x in sortedItems) {
+      tracker.sortedLabels[x] = sortedItems[x].name;
+      tracker.sortedClicks[x] = sortedItems[x].clicks;
+    }
+  },
+
+/////////////////////////////////////////////////////////////////////////
   updateChartData: function() {
     for (var index in items) {
       tracker.labels[index] = items[index].name;
       tracker.click_data[index] = items[index].clicks;
       tracker.shown_data[index] = items[index].shown;
-      tracker.perc_clicked[index] = (Math.round(items[index].clicks / items[index].shown * 10) / 10) * 100;
     }
-    console.log(tracker.perc_clicked);
   },
 
   renderBarChart: function() {
@@ -189,10 +208,40 @@ var tracker = {
         }
       }
     });
+    canvas.style.visibility = 'visible';
+  },
 
+  renderPieChart: function() {
+    var canvas = document.getElementById('pie');
+    var ctx = canvas.getContext('2d');
+
+    var piedata = {
+      labels: tracker.sortedLabels,
+      datasets: [
+        {
+          data: tracker.sortedClicks,
+          backgroundColor: ['#0012ff','#00ff66', '#9f1f96', '#959a6b', '#82e9f7']
+        }
+      ]
+    };
+
+    var pieChart = new Chart(ctx, {
+      type: 'pie',
+      data: piedata,
+      options: {
+        maintainAspectRatio: false,
+        responsive: true,
+      }
+    });
+    canvas.style.visibility = 'visible';
+  },
+
+  renderCharts: function() {
+    tracker.renderBarChart();
+    tracker.sortByPercClicked();
+    tracker.renderPieChart();
     var results_button = document.getElementById('results_button');
     results_button.removeEventListener('click', tracker.renderBarChart);
-    canvas.style.visibility = 'visible';
   }
 };
 
@@ -202,7 +251,7 @@ var images_section = document.getElementById('images');
 images_section.addEventListener('click', tracker.updateItem);
 
 var results_button = document.getElementById('results_button');
-results_button.addEventListener('click', tracker.renderBarChart);
+results_button.addEventListener('click', tracker.renderCharts);
 
 var reset_button = document.getElementById('reset_button');
 reset_button.addEventListener('click', tracker.resetPage);
