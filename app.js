@@ -10,6 +10,7 @@ function Item(name) {
   this.source = 'img/' + name + '.jpg';
   this.clicks = 0;
   this.shown = 0;
+  this.perc = 0;
   items.push(this);
 }
 
@@ -36,9 +37,12 @@ var tracker = {
   img1: document.getElementById('img1'),
   img2: document.getElementById('img2'),
   img3: document.getElementById('img3'),
-  selectedItems: [],
+
+  sortedItems: [],
   sortedLabels: [],
-  sortedClicks: [],
+  sortedPerc: [],
+
+  selectedItems: [],
 
   // get three random values and push to an array
   pickIndices: function() {
@@ -59,21 +63,21 @@ var tracker = {
 
   // update the images on the page
   updateImages: function() {
-    img1.src = tracker.selectedItems[0].source;
-    img2.src = tracker.selectedItems[1].source;
-    img3.src = tracker.selectedItems[2].source;
+    img1.src = this.selectedItems[0].source;
+    img2.src = this.selectedItems[1].source;
+    img3.src = this.selectedItems[2].source;
 
-    img1.name = tracker.selectedItems[0].name;
-    img2.name = tracker.selectedItems[1].name;
-    img3.name = tracker.selectedItems[2].name;
+    img1.name = this.selectedItems[0].name;
+    img2.name = this.selectedItems[1].name;
+    img3.name = this.selectedItems[2].name;
 
-    art1.name = tracker.selectedItems[0].name;
-    art2.name = tracker.selectedItems[1].name;
-    art3.name = tracker.selectedItems[2].name;
+    art1.name = this.selectedItems[0].name;
+    art2.name = this.selectedItems[1].name;
+    art3.name = this.selectedItems[2].name;
 
-    tracker.selectedItems[0].updateShown();
-    tracker.selectedItems[1].updateShown();
-    tracker.selectedItems[2].updateShown();
+    this.selectedItems[0].updateShown();
+    this.selectedItems[1].updateShown();
+    this.selectedItems[2].updateShown();
   },
 
   clearSelectedItems: function() {
@@ -137,26 +141,46 @@ var tracker = {
     pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   },
 
+  updatePercClicked: function() {
+    for (var index in items) {
+      items[index].perc = Math.floor(items[index].clicks / items[index].shown * 100);
+    }
+  },
+
+  sortOutNanValues: function() {
+    for (var index in items) {
+      if (isNaN(items[index].perc) === false) {
+        tracker.sortedItems.push(items[index]);
+      }
+    }
+  },
+
   sortByPercClicked: function() {
-    items.sort(function (a, b) {
-      if (a.clicks < b.clicks) {
+    this.sortedItems.sort(function (a, b) {
+      if (a.perc < b.perc) {
         return 1;
       }
-      if (a.clicks > b.clicks) {
+      if (a.perc > b.perc) {
         return -1;
       }
       return 0;
     });
 
-    var sortedItems = items.slice(0,5);
+    var sortedItems = tracker.sortedItems.slice(0,5);
 
     for (var x in sortedItems) {
       tracker.sortedLabels[x] = sortedItems[x].name;
-      tracker.sortedClicks[x] = sortedItems[x].clicks;
+      tracker.sortedPerc[x] = sortedItems[x].perc;
     }
   },
 
-/////////////////////////////////////////////////////////////////////////
+  sortHelper: function() {
+    this.updatePercClicked();
+    this.sortOutNanValues();
+    this.sortByPercClicked();
+  },
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
   updateChartData: function() {
     for (var index in items) {
       tracker.labels[index] = items[index].name;
@@ -219,8 +243,8 @@ var tracker = {
       labels: tracker.sortedLabels,
       datasets: [
         {
-          data: tracker.sortedClicks,
-          backgroundColor: ['#0012ff','#00ff66', '#9f1f96', '#959a6b', '#82e9f7']
+          data: tracker.sortedPerc,
+          backgroundColor: ['#de6b48','#31b3a3', '#655dab', '#f2e641', '#56b447']
         }
       ]
     };
@@ -231,6 +255,18 @@ var tracker = {
       options: {
         maintainAspectRatio: false,
         responsive: true,
+        title: {
+          display: true,
+          text: 'Top Five Items by Percentage Clicked',
+          fontSize: 24
+        },
+        legend: {
+          position: 'bottom',
+          labels: {
+            fontSize: 24,
+            boxWidth: 40
+          }
+        }
       }
     });
     canvas.style.visibility = 'visible';
@@ -238,7 +274,7 @@ var tracker = {
 
   renderCharts: function() {
     tracker.renderBarChart();
-    tracker.sortByPercClicked();
+    tracker.sortHelper();
     tracker.renderPieChart();
     var results_button = document.getElementById('results_button');
     results_button.removeEventListener('click', tracker.renderBarChart);
