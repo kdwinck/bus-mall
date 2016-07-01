@@ -14,14 +14,8 @@ function Item(name) {
   items.push(this);
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// create all the item objects
-// for (var index in images) {
-//   new Item(images[index]);
-// }
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////*!-- Begin tracker object --!*/////////////////////////////////////////////////////////////////////////////
 
 // tracker object used to change images and update all properties
 var tracker = {
@@ -75,7 +69,7 @@ var tracker = {
     this.updateShown(this.selectedItems[2]);
   },
 
-////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////
 
   clearSelectedItems: function() {
     tracker.selectedItems = [];
@@ -89,7 +83,7 @@ var tracker = {
     obj.shown += 1;
   },
 
-  updateClickTotals: function() {
+  updateTotalClicks: function() {
     tracker.total_clicks += 1;
     console.log(tracker.total_clicks);
   },
@@ -103,7 +97,7 @@ var tracker = {
 
   clickHelper: function(obj) {
     tracker.updateClicks(obj);
-    tracker.updateClickTotals();
+    tracker.updateTotalClicks();
     tracker.setLocalStorage();
     tracker.clearSelectedItems();
     tracker.doTheImageThing();
@@ -112,14 +106,12 @@ var tracker = {
   updateItem: function(event) {
     var name = event.target.name;
     console.log(name);
-    if (name !== 'images') {
-      for (var obj in tracker.selectedItems) {
-        if (tracker.selectedItems[obj].name === name) {
-          tracker.clickHelper(tracker.selectedItems[obj]);
+    if (name) {
+      for (var obj in items) {
+        if (items[obj].name === name) {
+          tracker.clickHelper(items[obj]);
         }
       }
-    } else {
-      alert('Warning! You did not click an image just now. Please click within the image.');
     }
   },
 
@@ -154,7 +146,7 @@ var tracker = {
     pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   },
 
-///////// methods to create pie chart arrays ///////////////////////////////////////////////////////////////
+///////// methods to create pie chart arrays ///////////////////////
 
   updatePercClicked: function() {
     for (var index in items) {
@@ -195,7 +187,7 @@ var tracker = {
     this.sortByPercClicked();
   },
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
 
   updateChartData: function() {
     for (var index in items) {
@@ -297,7 +289,8 @@ var tracker = {
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////*!--End tracker object --!*///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var images_section = document.getElementById('images');
 images_section.addEventListener('click', tracker.updateItem);
