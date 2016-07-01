@@ -14,19 +14,8 @@ function Item(name) {
   items.push(this);
 }
 
-// update the total of times shown when this image is selected
-Item.prototype.updateShown = function() {
-  this.shown += 1;
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-// create all the item objects
-for (var index in images) {
-  new Item(images[index]);
-}
-
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////*!-- Begin tracker object --!*/////////////////////////////////////////////////////////////////////////////
 
 // tracker object used to change images and update all properties
 var tracker = {
@@ -75,10 +64,12 @@ var tracker = {
     art2.name = this.selectedItems[1].name;
     art3.name = this.selectedItems[2].name;
 
-    this.selectedItems[0].updateShown();
-    this.selectedItems[1].updateShown();
-    this.selectedItems[2].updateShown();
+    this.updateShown(this.selectedItems[0]);
+    this.updateShown(this.selectedItems[1]);
+    this.updateShown(this.selectedItems[2]);
   },
+
+///////////////////////////////////////////
 
   clearSelectedItems: function() {
     tracker.selectedItems = [];
@@ -88,35 +79,48 @@ var tracker = {
     obj.clicks += 1;
   },
 
-  updateClickTotals: function() {
+  updateShown: function(obj) {
+    obj.shown += 1;
+  },
+
+  updateTotalClicks: function() {
     tracker.total_clicks += 1;
+    console.log(tracker.total_clicks);
+  },
+
+  setLocalStorage: function() {
+    var strItems = JSON.stringify(items);
+    localStorage.setItem('Items', strItems);
+    var strTotalClicks = JSON.stringify(this.total_clicks);
+    localStorage.setItem('Clicks', strTotalClicks);
   },
 
   clickHelper: function(obj) {
     tracker.updateClicks(obj);
-    tracker.updateClickTotals();
+    tracker.updateTotalClicks();
+    tracker.setLocalStorage();
     tracker.clearSelectedItems();
     tracker.doTheImageThing();
   },
 
   updateItem: function(event) {
     var name = event.target.name;
-    if (name !== 'images') {
-      for (var obj in tracker.selectedItems) {
-        if (tracker.selectedItems[obj].name === name) {
-          tracker.clickHelper(tracker.selectedItems[obj]);
+    console.log(name);
+    if (name) {
+      for (var obj in items) {
+        if (items[obj].name === name) {
+          tracker.clickHelper(items[obj]);
         }
       }
-    } else {
-      alert('Warning! You did not click an image just now. Please click within the image.');
     }
   },
 
   doTheImageThing: function () {
-    tracker.pickIndices();
-    tracker.convertIndices();
-    tracker.updateImages();
-    if (tracker.total_clicks === 15) {
+    if (tracker.total_clicks < 15) {
+      tracker.pickIndices();
+      tracker.convertIndices();
+      tracker.updateImages();
+    } else {
       tracker.cancelClickListener();
       tracker.showTotalClicks();
       tracker.showButton('results_button');
@@ -133,6 +137,7 @@ var tracker = {
   },
 
   resetPage: function() {
+    localStorage.clear();
     location.reload();
   },
 
@@ -140,6 +145,8 @@ var tracker = {
     var pTag = document.getElementById('clicks');
     pTag.textContent = 'Total Clicks: ' + tracker.total_clicks;
   },
+
+///////// methods to create pie chart arrays ///////////////////////
 
   updatePercClicked: function() {
     for (var index in items) {
@@ -180,7 +187,8 @@ var tracker = {
     this.sortByPercClicked();
   },
 
-//////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////
+
   updateChartData: function() {
     for (var index in items) {
       tracker.labels[index] = items[index].name;
@@ -277,11 +285,12 @@ var tracker = {
     tracker.sortHelper();
     tracker.renderPieChart();
     var results_button = document.getElementById('results_button');
-    results_button.removeEventListener('click', tracker.renderBarChart);
+    results_button.removeEventListener('click', tracker.renderCharts);
   }
 };
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////*!--End tracker object --!*///////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var images_section = document.getElementById('images');
 images_section.addEventListener('click', tracker.updateItem);
@@ -291,5 +300,24 @@ results_button.addEventListener('click', tracker.renderCharts);
 
 var reset_button = document.getElementById('reset_button');
 reset_button.addEventListener('click', tracker.resetPage);
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+(function getStoredData() {
+  if (localStorage.Items) {
+    var strTotalClicks = JSON.parse(localStorage.getItem('Clicks'));
+    tracker.total_clicks = strTotalClicks;
+    var strItems = JSON.parse(localStorage.getItem('Items'));
+    for (var index in strItems) {
+      items[index] = strItems[index];
+    }
+  } else {
+    for (var name in images) {
+      new Item(images[name]);
+    }
+  }
+})();
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 tracker.doTheImageThing();
